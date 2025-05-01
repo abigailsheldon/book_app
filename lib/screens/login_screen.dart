@@ -1,3 +1,8 @@
+/*
+ * Login form, handles validation, displays errors,
+ * and calls UserProvider.login when submitting.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
@@ -27,12 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
           key: _formKey,
           child: Column(
             children: [
+              
+              // Email input field with simple validation
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (val) => val!.contains('@') ? null : 'Invalid email',
                 onSaved: (val) => _email = val!.trim(),
               ),
+              // Password input
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
@@ -40,8 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 onSaved: (val) => _password = val!,
               ),
               const SizedBox(height: 20),
+
+              // Error message display if authentication fails
               if (userProv.errorMessage != null)
                 Text(userProv.errorMessage!, style: const TextStyle(color: Colors.red)),
+              
+              // Login butto, triggers form validation & login
               ElevatedButton(
                 onPressed: _loading ? null : () async {
                   if (_formKey.currentState!.validate()) {
@@ -58,6 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ? const CircularProgressIndicator()
                   : const Text('Login'),
               ),
+              
+              // Button to navigate to sign-up
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/signup'),
                 child: const Text('Don\'t have an account? Sign up'),

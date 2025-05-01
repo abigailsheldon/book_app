@@ -1,3 +1,7 @@
+/*
+ * Manages authentication state for app, exposing login, signup, and logout.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
@@ -7,8 +11,15 @@ class UserProvider extends ChangeNotifier {
   User? _user;
   String? errorMessage;
 
+  /*
+   * Exposes the current Firebase user, or null if not authenticated.
+   */
   User? get user => _user;
 
+  /*
+   * login: Calls AuthService.signIn and updates state.
+   * Returns true if success, false otherwise.
+   */
   Future<bool> login(String email, String password) async {
     try {
       _user = await _authService.signIn(email, password);
@@ -22,6 +33,10 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  /*
+   * signup: Calls AuthService.signUp and updates state.
+   * Returns true if success, false otherwise.
+   */
   Future<bool> signup(String email, String password) async {
     try {
       _user = await _authService.signUp(email, password);
@@ -35,6 +50,9 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  /*
+   * logout: Calls AuthService.signOut and clears user state.
+   */
   Future<void> logout() async {
     await _authService.signOut();
     _user = null;

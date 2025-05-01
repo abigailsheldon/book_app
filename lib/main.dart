@@ -1,3 +1,8 @@
+/*
+ * Entry point of the Flutter app. Initializes Firebase and sets up routing and providers.
+ */
+
+import 'package:book_app/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +21,9 @@ void main() async {
   runApp(const BookApp());
 }
 
+/*
+ * BookApp is the root widget. 
+ */
 class BookApp extends StatelessWidget {
   const BookApp({super.key});
 
@@ -23,6 +31,7 @@ class BookApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Provides authentication state and methods via UserProvider
         ChangeNotifierProvider(create: (_) => UserProvider()),
         // TODO: add BookProvider, ReviewProvider, etc.
       ],
@@ -31,9 +40,12 @@ class BookApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        // Defines initial route
         initialRoute: '/login',
+        // Available routes
         routes: {
           '/login': (_) => const LoginScreen(),
+          '/signup': (_) => const SignupScreen(),
           '/home': (_) => const HomeScreen(),
           // TODO: register other routes
         },
