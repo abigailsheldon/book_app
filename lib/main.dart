@@ -8,6 +8,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/user_provider.dart';
+import 'providers/review_provider.dart';
+import 'providers/book_provider.dart';
+
+
+
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 
@@ -31,10 +36,14 @@ class BookApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => BookProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        
         // Provides authentication state and methods via UserProvider
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        // TODO: add BookProvider, ReviewProvider, etc.
       ],
+      
       child: MaterialApp(
         title: 'Book Recommendation',
         theme: ThemeData(
