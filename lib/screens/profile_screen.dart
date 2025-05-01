@@ -4,11 +4,10 @@ import '../models/user.dart';
 import '../providers/user_provider.dart';
 import '../services/firestore_service.dart';
 
-/* 
- * Displays the current user's profile information and their reading lists:
- * "Want to Read", "Currently Reading", and "Finished".
+/*
+ * ProfileScreen
+ * Displays the user's display name, email, and their three reading lists.
  */
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -17,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final FirestoreService _fs = FirestoreService();
+  final FirestoreService _firestore = FirestoreService();
   AppUser? _appUser;
   bool _loading = true;
 
@@ -27,28 +26,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadProfile();
   }
 
-  // Load user profile data from Firestore
   Future<void> _loadProfile() async {
-    final user = Provider.of<UserProvider>(context, listen: false).user;
-    if (user != null) {
-      final profile = await _fs.getUser(user.uid);
+    final firebaseUser =
+        Provider.of<UserProvider>(context, listen: false).user;
+    if (firebaseUser != null) {
+      final userData = await _firestore.getUser(firebaseUser.uid);
       setState(() {
-        _appUser = profile;
+        _appUser = userData;
         _loading = false;
       });
     }
   }
 
-  // Builds a section for a reading list category
   Widget _buildListSection(String title, List<String> bookIds) {
     return ExpansionTile(
       title: Text(title, style: Theme.of(context).textTheme.titleMedium),
       children: bookIds.isEmpty
-          ? [const ListTile(title: Text('No books added.'))]
-          : bookIds.map((id) => ListTile(
-                leading: const Icon(Icons.bookmark),
-                title: Text(id),  // TODO: replace with BookCard when integrating book details
-              )).toList(),
+          ? [const ListTile(title: Text('No books in this list.'))]
+          : bookIds
+              .map((id) => ListTile(
+                    leading: const Icon(Icons.bookmark),
+                    title: Text(id),
+                  ))
+              .toList(),
     );
   }
 
@@ -63,22 +63,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
-                  // Display user info
+                  // Display name
                   Text(
-                    _appUser!.displayName ?? 'No Name',
+                    _appUser!.displayName ?? 'No Display Name',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 4),
+                  // Email
                   Text(
                     _appUser!.email,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 16),
-
                   // Reading lists
-                  _buildListSection('Want to Read', _appUser!.readingListWantToRead),
-                  _buildListSection('Currently Reading', _appUser!.readingListReading),
+                  _buildListSection(
+                      'Want to Read', _appUser!.readingListWantToRead),
+                  _buildListSection(
+                      'Currently Reading', _appUser!.readingListReading),
                   _buildListSection('Finished', _appUser!.readingListFinished),
                 ],
               ),

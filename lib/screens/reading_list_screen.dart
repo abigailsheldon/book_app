@@ -5,11 +5,10 @@ import '../providers/user_provider.dart';
 import '../services/firestore_service.dart';
 
 /*
- *
- * Displays the user's three reading lists: "Want to Read", "Currently Reading", and "Finished".
+ * ReadingListScreen
+ * Shows the user's "Want to Read", "Currently Reading", and "Finished" lists.
  * Allows moving books between lists or removing them.
  */
-
 class ReadingListScreen extends StatefulWidget {
   const ReadingListScreen({Key? key}) : super(key: key);
 
@@ -19,21 +18,16 @@ class ReadingListScreen extends StatefulWidget {
 
 class _ReadingListScreenState extends State<ReadingListScreen>
     with SingleTickerProviderStateMixin {
-  final FirestoreService _fs = FirestoreService();
+  final FirestoreService _firestore = FirestoreService();
   AppUser? _appUser;
   bool _loading = true;
   late TabController _tabController;
-
-  static const List<String> _tabTitles = [
-    'Want to Read',
-    'Reading',
-    'Finished',
-  ];
+  static const _tabs = ['Want to Read', 'Reading', 'Finished'];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _tabTitles.length, vsync: this);
+    _tabController = TabController(length: _tabs.length, vsync: this);
     _loadUser();
   }
 
@@ -43,42 +37,41 @@ class _ReadingListScreenState extends State<ReadingListScreen>
     super.dispose();
   }
 
-  // Load the current AppUser from Firestore
   Future<void> _loadUser() async {
-    final firebaseUser =
-        Provider.of<UserProvider>(context, listen: false).user;
+    final firebaseUser = Provider.of<UserProvider>(context, listen: false).user;
     if (firebaseUser != null) {
-      final profile = await _fs.getUser(firebaseUser.uid);
+      final userData = await _firestore.getUser(firebaseUser.uid);
       setState(() {
-        _appUser = profile;
+        _appUser = userData;
         _loading = false;
       });
     }
   }
 
-  // Handle menu action: move or remove a book [bookId]
-  Future<void> _handleAction(
-      String bookId, String action, List<String> currentList) async {
+  Future<void> _updateList(String bookId, String action) async {
     if (_appUser == null) return;
-    // Copy lists
+    // Copy existing lists
     final want = List<String>.from(_appUser!.readingListWantToRead);
     final reading = List<String>.from(_appUser!.readingListReading);
     final finished = List<String>.from(_appUser!.readingListFinished);
-
     // Remove from all
     want.remove(bookId);
     reading.remove(bookId);
     finished.remove(bookId);
-
+    // Add to target
     if (action != 'Remove') {
-      
-      // Determine target list
-      if (action == 'Move to Want to Read') want.add(bookId);
-      if (action == 'Move to Reading') reading.add(bookId);
-      if (action == 'Move to Finished') finished.add(bookId);
+      switch (action) {
+        case 'Want to Read':
+          want.add(bookId);
+          break;
+        case 'Reading':
+          reading.add(bookId);
+          break;
+        case 'Finished':
+          finished.add(bookId);
+          break;
+      }
     }
-
-    // Update user
     final updated = AppUser(
       uid: _appUser!.uid,
       email: _appUser!.email,
@@ -88,42 +81,32 @@ class _ReadingListScreenState extends State<ReadingListScreen>
       readingListReading: reading,
       readingListFinished: finished,
     );
-    await _fs.setUser(updated);
+    await _firestore.setUser(updated);
     setState(() => _appUser = updated);
   }
 
-  // Build a list for the given [index]
-  Widget _buildTab(int index) {
+  Widget _buildTabContent(int index) {
     if (_appUser == null) return const SizedBox.shrink();
-    List<String> listIds;
-    switch (index) {
-      case 0:
-        listIds = _appUser!.readingListWantToRead;
-        break;
-      case 1:
-        listIds = _appUser!.readingListReading;
-        break;
-      case 2:
-        listIds = _appUser!.readingListFinished;
-        break;
-      default:
-        listIds = [];
-    }
-    if (listIds.isEmpty) {
+    final lists = [
+      _appUser!.readingListWantToRead,
+      _appUser!.readingListReading,
+      _appUser!.readingListFinished,
+    ];
+    final currentList = lists[index];
+    if (currentList.isEmpty) {
       return const Center(child: Text('No books in this list.'));
     }
-    return ListView.builder(
-      itemCount: listIds.length,
+    return ListView.separated(
+      itemCount: currentList.length,
+      separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (ctx, i) {
-        final bookId = listIds[i];
+        final id = currentList[i];
         return ListTile(
-          title: Text(bookId), // TODO: fetch Book details
+          title: Text(id), // TODO: replace with BookCard for real details
           trailing: PopupMenuButton<String>(
-            onSelected: (action) => _handleAction(bookId, action, listIds),
+            onSelected: (value) => _updateList(id, value),
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'Move to Want to Read', child: Text('Move to Want to Read')),
-              const PopupMenuItem(value: 'Move to Reading', child: Text('Move to Reading')),
-              const PopupMenuItem(value: 'Move to Finished', child: Text('Move to Finished')),
+              for (var tab in _tabs) PopupMenuItem(value: tab, child: Text('Move to $tab')),
               const PopupMenuDivider(),
               const PopupMenuItem(value: 'Remove', child: Text('Remove')),
             ],
@@ -140,15 +123,15 @@ class _ReadingListScreenState extends State<ReadingListScreen>
         title: const Text('My Reading Lists'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: _tabTitles.map((t) => Tab(text: t)).toList(),
+          tabs: _tabs.map((t) => Tab(text: t)).toList(),
         ),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
-              children: List.generate(
-                  _tabTitles.length, (index) => _buildTab(index)),
+              children:
+                  List.generate(_tabs.length, (index) => _buildTabContent(index)),
             ),
     );
   }

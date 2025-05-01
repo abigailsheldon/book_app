@@ -6,7 +6,6 @@ import '../providers/user_provider.dart';
  * Login form, handles validation, displays errors,
  * and calls UserProvider.login when submitting.
  */
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -23,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final userProv = Provider.of<UserProvider>(context);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
@@ -32,49 +30,48 @@ class _LoginScreenState extends State<LoginScreen> {
           key: _formKey,
           child: Column(
             children: [
-              
-              // Email input field with simple validation
+              // Email input
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
-                validator: (val) => val!.contains('@') ? null : 'Invalid email',
+                validator: (val) =>
+                    val != null && val.contains('@') ? null : 'Invalid email',
                 onSaved: (val) => _email = val!.trim(),
               ),
               // Password input
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (val) => val!.length >= 6 ? null : 'Min 6 chars',
+                validator: (val) =>
+                    val != null && val.length >= 6 ? null : 'Min 6 chars',
                 onSaved: (val) => _password = val!,
               ),
               const SizedBox(height: 20),
-
-              // Error message display if authentication fails
+              // Error message
               if (userProv.errorMessage != null)
-                Text(userProv.errorMessage!, style: const TextStyle(color: Colors.red)),
-              
-              // Login butto, triggers form validation & login
+                Text(userProv.errorMessage!,
+                    style: const TextStyle(color: Colors.red)),
+              // Login button
               ElevatedButton(
-                onPressed: _loading ? null : () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    setState(() => _loading = true);
-                    final success = await userProv.login(_email, _password);
-                    setState(() => _loading = false);
-                    if (success) {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    }
-                  }
-                },
-                child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text('Login'),
+                onPressed: _loading
+                    ? null
+                    : () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          setState(() => _loading = true);
+                          final success =
+                              await userProv.login(_email, _password);
+                          setState(() => _loading = false);
+                          if (success) Navigator.pushReplacementNamed(context, '/home');
+                        }
+                      },
+                child:
+                    _loading ? const CircularProgressIndicator() : const Text('Login'),
               ),
-              
-              // Button to navigate to sign-up
+              // Navigate to signup
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/signup'),
-                child: const Text('Don\'t have an account? Sign up'),
+                child: const Text("Don't have an account? Sign up"),
               ),
             ],
           ),

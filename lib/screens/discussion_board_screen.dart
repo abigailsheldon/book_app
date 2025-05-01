@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/discussion_post.dart';
@@ -6,23 +5,17 @@ import '../providers/user_provider.dart';
 import '../services/firestore_service.dart';
 
 /*
- * DiscussionBoardScreen
- * Shows a threaded list of discussion posts for a given category (e.g. book ID).
- * If parentId is null, shows top-level posts; otherwise shows replies to that post.
+ * Discussion board and threaded replies
  */
-
 class DiscussionBoardScreen extends StatefulWidget {
   final String category;
   final String? parentId;
-
-  const DiscussionBoardScreen({
-    Key? key,
-    required this.category,
-    this.parentId,
-  }) : super(key: key);
-
+  const DiscussionBoardScreen(
+      {Key? key, required this.category, this.parentId})
+      : super(key: key);
   @override
-  State<DiscussionBoardScreen> createState() => _DiscussionBoardScreenState();
+  State<DiscussionBoardScreen> createState() =>
+      _DiscussionBoardScreenState();
 }
 
 class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
@@ -36,24 +29,22 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
     super.dispose();
   }
 
-  /*
-   * Shows a dialog to enter a new post (or reply), then saves it to Firestore.
-   */
   Future<void> _showNewPostDialog() async {
-    final userProv = Provider.of<UserProvider>(context, listen: false);
+    final userProv =
+        Provider.of<UserProvider>(context, listen: false);
     final uid = userProv.user!.uid;
-    final name = userProv.user!.email ?? 'Anonymous';
-
+    final name = userProv.user!.email!;
     await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(widget.parentId == null ? 'New Post' : 'Reply to Post'),
+        title: Text(
+            widget.parentId == null ? 'New Post' : 'Reply to Post'),
         content: TextField(
           controller: _controller,
           autofocus: true,
           maxLines: 4,
           decoration: const InputDecoration(
-            hintText: 'Write your message here…',
+            hintText: 'Write your message…',
           ),
         ),
         actions: [
@@ -70,9 +61,8 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
                 : () async {
                     if (_controller.text.trim().isEmpty) return;
                     setState(() => _submitting = true);
-
                     final post = DiscussionPost(
-                      id: '', // Firestore will assign
+                      id: '',
                       authorId: uid,
                       authorName: name,
                       category: widget.category,
@@ -80,21 +70,13 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
                       createdAt: DateTime.now(),
                       parentId: widget.parentId,
                     );
-
                     await _fs.addDiscussionPost(post);
                     setState(() => _submitting = false);
                     _controller.clear();
                     Navigator.of(ctx).pop();
                   },
             child: _submitting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                ? const CircularProgressIndicator(strokeWidth: 2)
                 : const Text('Post'),
           ),
         ],
@@ -104,23 +86,19 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-    // Stream posts for this category/parentId
     final stream = _fs.discussionStream(
       widget.category,
       parentId: widget.parentId,
     );
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.parentId == null
-            ? 'Discussion Board'
-            : 'Replies'),
-      ),
+          title: Text(
+              widget.parentId == null ? 'Discussion Board' : 'Replies')),
       body: StreamBuilder<List<DiscussionPost>>(
         stream: stream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           final posts = snapshot.data ?? [];
@@ -129,8 +107,8 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
           }
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: posts.length,
             separatorBuilder: (_, __) => const Divider(),
+            itemCount: posts.length,
             itemBuilder: (ctx, i) {
               final post = posts[i];
               return ListTile(
@@ -139,7 +117,6 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
                 trailing: IconButton(
                   icon: const Icon(Icons.reply),
                   onPressed: () {
-                    // Navigate to a threaded view of replies
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -156,8 +133,6 @@ class _DiscussionBoardScreenState extends State<DiscussionBoardScreen> {
           );
         },
       ),
-      
-      // FAB to add a new top-level post or reply
       floatingActionButton: FloatingActionButton(
         onPressed: _showNewPostDialog,
         child: const Icon(Icons.add_comment),

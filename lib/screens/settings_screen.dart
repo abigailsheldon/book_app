@@ -5,60 +5,51 @@ import '../providers/user_provider.dart';
 import '../services/firestore_service.dart';
 
 /*
- * Allows the user to view and update profile settings (display name, favorite genres)
- * and to log out of the app.
+ * SettingsScreen
+ * Allows user to update display name and favorite genres, and to log out.
  */
-
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final FirestoreService _fs = FirestoreService();
+  final _nameController = TextEditingController();
+  final FirestoreService _firestore = FirestoreService();
   bool _loading = false;
   AppUser? _appUser;
   List<String> _selectedGenres = [];
 
-  // Pre-defined list of genres for selection
   static const List<String> _allGenres = [
-    'Fiction', 'Non-fiction', 'Sci-Fi', 'Fantasy', 'Mystery', 'Romance',
-    'Horror', 'Biography', 'History', 'Science'
+    'Fiction', 'Non-fiction', 'Sci-Fi', 'Fantasy', 'Mystery',
+    'Romance', 'Horror', 'Biography', 'History', 'Science'
   ];
 
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _loadUserData();
   }
 
-  /*
-   * Loads the AppUser document from Firestore and initializes form fields.
-   */
-  Future<void> _loadUser() async {
-    final user = Provider.of<UserProvider>(context, listen: false).user;
-    if (user != null) {
-      final appUser = await _fs.getUser(user.uid);
+  Future<void> _loadUserData() async {
+    final firebaseUser = Provider.of<UserProvider>(context, listen: false).user;
+    if (firebaseUser != null) {
+      final userData = await _firestore.getUser(firebaseUser.uid);
       setState(() {
-        _appUser = appUser;
-        _nameController.text = appUser.displayName ?? '';
-        _selectedGenres = List.from(appUser.favoriteGenres);
+        _appUser = userData;
+        _nameController.text = userData.displayName ?? '';
+        _selectedGenres = List.from(userData.favoriteGenres);
       });
     }
   }
 
-  /*
-   * Saves the updated AppUser back to Firestore.
-   */
   Future<void> _saveSettings() async {
     if (!_formKey.currentState!.validate() || _appUser == null) return;
     setState(() => _loading = true);
-
-    final updatedUser = AppUser(
+    final updated = AppUser(
       uid: _appUser!.uid,
       email: _appUser!.email,
       displayName: _nameController.text.trim(),
@@ -67,16 +58,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       readingListReading: _appUser!.readingListReading,
       readingListFinished: _appUser!.readingListFinished,
     );
-
-    await _fs.setUser(updatedUser);
+    await _firestore.setUser(updated);
     setState(() => _loading = false);
     ScaffoldMessenger.of(context)
-      .showSnackBar(const SnackBar(content: Text('Settings saved.')));
+        .showSnackBar(const SnackBar(content: Text('Settings saved.')));
   }
 
-  /*
-   * Logs the user out via UserProvider and navigates to the login screen.
-   */
   Future<void> _logout() async {
     await Provider.of<UserProvider>(context, listen: false).logout();
     Navigator.pushReplacementNamed(context, '/login');
@@ -101,15 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    
                     // Display user email (read-only)
-                    Text(
-                      'Email: ${_appUser!.email}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    Text('Email: ${_appUser!.email}'),
                     const SizedBox(height: 16),
-
-                    // Editable display name field
+                    // Display name input
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -122,8 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               : 'Enter a display name',
                     ),
                     const SizedBox(height: 24),
-
-                    // Favorite genres multi-select via FilterChips
+                    // Favorite genres selection
                     const Text('Favorite Genres'),
                     const SizedBox(height: 8),
                     Wrap(
@@ -132,9 +113,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         return FilterChip(
                           label: Text(genre),
                           selected: _selectedGenres.contains(genre),
-                          onSelected: (yes) {
+                          onSelected: (selected) {
                             setState(() {
-                              if (yes) {
+                              if (selected) {
                                 _selectedGenres.add(genre);
                               } else {
                                 _selectedGenres.remove(genre);
@@ -145,23 +126,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 32),
-
-                    // Save settings button
+                    // Save button
                     ElevatedButton(
                       onPressed: _loading ? null : _saveSettings,
                       child: _loading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                          ? const CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white)
                           : const Text('Save Settings'),
                     ),
                     const SizedBox(height: 16),
-
                     // Logout button
                     OutlinedButton(
                       onPressed: _logout,
