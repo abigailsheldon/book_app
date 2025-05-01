@@ -1,3 +1,7 @@
+/*
+ * Represents a book from Google Books API and serializes to/from JSON.
+ */
+
 class Book {
   final String id;
   final String title;
@@ -15,6 +19,9 @@ class Book {
     required this.rating,
   });
 
+  /*
+   * Constructs a Book instance from Google Books API JSON response.
+   */
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       id: json['id'],
