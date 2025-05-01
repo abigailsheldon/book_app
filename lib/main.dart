@@ -1,7 +1,3 @@
-/*
- * Entry point of the Flutter app. Initializes Firebase and sets up routing and providers.
- */
-
 import 'package:book_app/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,12 +7,13 @@ import 'providers/user_provider.dart';
 import 'providers/review_provider.dart';
 import 'providers/book_provider.dart';
 
-
-
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
-
 import 'firebase_options.dart';
+
+/*
+ * Entry point of the Flutter app. Initializes Firebase and sets up routing and providers.
+ */
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

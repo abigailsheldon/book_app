@@ -7,7 +7,6 @@ import '../services/firestore_service.dart';
 
 /* UI for writing & submitting a review for one book. */
 
-
 class ReviewScreen extends StatefulWidget {
   final Book book;
   const ReviewScreen({Key? key, required this.book}) : super(key: key);
