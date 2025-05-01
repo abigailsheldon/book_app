@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/user_provider.dart';
+
 /*
  * Login form, handles validation, displays errors,
  * and calls UserProvider.login when submitting.
  */
-
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/user_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

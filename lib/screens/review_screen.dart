@@ -1,11 +1,12 @@
-/* UI for writing & submitting a review for one book. */
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/book.dart';
 import '../models/review.dart';
 import '../providers/user_provider.dart';
 import '../services/firestore_service.dart';
+
+/* UI for writing & submitting a review for one book. */
+
 
 class ReviewScreen extends StatefulWidget {
   final Book book;
