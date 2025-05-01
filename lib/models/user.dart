@@ -1,9 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 /*
  * Represents an app user and serializes to/from Firestore.
- * 
  * Stores uid (user id), email, display name, fav. genres, and reading lists
  */
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser {
   final String uid;

@@ -1,10 +1,10 @@
-/*
- * Manages authentication state for app, exposing login, signup, and logout.
- */
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
+
+/*
+ * Manages authentication state for app, exposing login, signup, and logout.
+ */
 
 class UserProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();

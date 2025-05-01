@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 /*
  * Represents a single post in a discussion board and serializes to/from Firestore.
  */
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DiscussionPost {
   final String id;

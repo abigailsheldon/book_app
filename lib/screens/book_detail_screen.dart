@@ -10,6 +10,7 @@ import 'review_screen.dart';
 /*
  * Displays all metadata for a single book, plus reviews and actions.
  */
+
 class BookDetailScreen extends StatelessWidget {
   final Book book;
 

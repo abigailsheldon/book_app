@@ -1,9 +1,10 @@
-/* 
- * Manages book search (and eventually recommendations) state.
- */
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/google_books_service.dart';
+
+/* 
+ * Manages book search (and eventually recommendations) state.
+ */
 
 class BookProvider extends ChangeNotifier {
   final GoogleBooksService _booksService = GoogleBooksService();
