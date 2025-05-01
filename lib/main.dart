@@ -49,8 +49,10 @@ class BookApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        
         // Defines initial route
         initialRoute: '/login',
+        
         // Available routes
         routes: {
           '/login': (_) => const LoginScreen(),
