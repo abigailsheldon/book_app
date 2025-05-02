@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 import '../models/review.dart';
 import '../providers/review_provider.dart';
 
-/* Displays a scrollable list of reviews for one book. */
+/*
+ * Displays a scrollable list of reviews for one book,
+ * showing reviewer name, content, rating, and edit/delete actions.
+ */
 class ReviewList extends StatelessWidget {
   final Stream<List<Review>> reviewsStream;
   const ReviewList({Key? key, required this.reviewsStream}) : super(key: key);
@@ -28,14 +31,32 @@ class ReviewList extends StatelessWidget {
           itemBuilder: (ctx, i) {
             final r = reviews[i];
             return ListTile(
-              title: Text(r.reviewerName),
-              subtitle: Text(r.content),
+              
+              // Display reviewer name with rating clearly
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      r.reviewerName,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  
+                  // Rating shown at end of title
+                  Text(
+                    '${r.rating}/5',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(r.content),
+              ),
               trailing: PopupMenuButton<String>(
                 onSelected: (choice) async {
                   final prov = context.read<ReviewProvider>();
                   if (choice == 'Edit') {
-                    
-                    // Inline edit dialog
                     String editedContent = r.content;
                     int editedRating = r.rating;
                     final result = await showDialog<Map<String, dynamic>>(
@@ -49,19 +70,23 @@ class ReviewList extends StatelessWidget {
                               initialValue: r.content,
                               maxLines: 3,
                               onChanged: (v) => editedContent = v,
-                              decoration: const InputDecoration(labelText: 'Review'),
+                              decoration: const InputDecoration(
+                                labelText: 'Review',
+                              ),
                             ),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<int>(
                               value: r.rating,
-                              items: List.generate(5, (i) => i + 1)
+                              items: List.generate(5, (j) => j + 1)
                                   .map((val) => DropdownMenuItem(
                                         value: val,
                                         child: Text('$val'),
                                       ))
                                   .toList(),
                               onChanged: (v) => editedRating = v!,
-                              decoration: const InputDecoration(labelText: 'Rating'),
+                              decoration: const InputDecoration(
+                                labelText: 'Rating',
+                              ),
                             ),
                           ],
                         ),
@@ -81,7 +106,6 @@ class ReviewList extends StatelessWidget {
                       ),
                     );
                     if (result != null) {
-                      // apply update
                       final updated = Review(
                         id: r.id,
                         bookId: r.bookId,

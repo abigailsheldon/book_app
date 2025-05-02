@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:dart_openai/dart_openai.dart';
+
 import 'firebase_options.dart';
 
 import 'providers/user_provider.dart';
 import 'providers/book_provider.dart';
 import 'providers/review_provider.dart';
 import 'providers/discussion_provider.dart';
+import 'providers/recommendation_provider.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
@@ -25,6 +28,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
+  OpenAI.apiKey = dotenv.env['OPENAI_API_KEY']!;
 
   // Initialize Firebase
   await Firebase.initializeApp(
@@ -48,6 +52,8 @@ class BookApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookProvider()),
         ChangeNotifierProvider(create: (_) => ReviewProvider()),        ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => DiscussionProvider()),
+        ChangeNotifierProvider(create: (_) => RecommendationProvider()),
+
 
         
         // Provides authentication state and methods via UserProvider
