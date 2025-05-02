@@ -43,4 +43,16 @@ class GoogleBooksService {
         .map((item) => Book.fromJson(item as Map<String, dynamic>))
         .toList();
   }
+
+  Future<Book> getBookById(String id) async {
+    final apiKey = dotenv.env['GOOGLE_BOOKS_API_KEY'];
+    final url = apiKey != null && apiKey.isNotEmpty
+        ? '$_baseUrl/$id?key=$apiKey'
+        : '$_baseUrl/$id';
+    final resp = await http.get(Uri.parse(url));
+    if (resp.statusCode != 200) throw Exception('Book not found');
+    final data = json.decode(resp.body) as Map<String, dynamic>;
+    return Book.fromJson(data);
+  }
+  
 }

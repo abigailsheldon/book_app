@@ -15,6 +15,8 @@ class BookProvider extends ChangeNotifier {
   List<Book> get searchResults => _searchResults;
   bool get loading => _loading;
   String? get error => _error;
+  Future<Book> fetchBookById(String id) => _booksService.getBookById(id);
+
 
   /// Search Google Books for [query] and update state.
   Future<void> searchBooks(String query) async {
