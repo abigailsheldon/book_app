@@ -1,9 +1,8 @@
-// lib/services/google_books_service.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/book.dart';
+import 'package:flutter/foundation.dart';
 
 class GoogleBooksService {
   static const String _baseUrl = 'https://www.googleapis.com/books/v1/volumes';
@@ -20,8 +19,16 @@ class GoogleBooksService {
       ? '$_baseUrl?q=$encodedQuery&key=$apiKey'
       : '$_baseUrl?q=$encodedQuery';
 
+    // Debug
+    debugPrint('GoogleBooks → GET $url');
+
+
     final uri = Uri.parse(url);
     final response = await http.get(uri);
+
+    // Debug
+    debugPrint('GoogleBooks ← ${response.statusCode}: ${response.body}');
+
 
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch books: ${response.statusCode}');

@@ -1,15 +1,20 @@
-import 'package:book_app/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 import 'providers/user_provider.dart';
-import 'providers/review_provider.dart';
 import 'providers/book_provider.dart';
+import 'providers/review_provider.dart';
 
 import 'screens/login_screen.dart';
+import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
-import 'firebase_options.dart';
+import 'screens/search_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/reading_list_screen.dart';
+import 'screens/settings_screen.dart';
 
 /*
  * Entry point of the Flutter app. Initializes Firebase and sets up routing and providers.
@@ -17,9 +22,14 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(const BookApp());
 }
 
@@ -55,8 +65,10 @@ class BookApp extends StatelessWidget {
           '/login': (_) => const LoginScreen(),
           '/signup': (_) => const SignupScreen(),
           '/home': (_) => const HomeScreen(),
-          // TODO: register other routes
-        },
+          '/search': (_) => const SearchScreen(),
+          '/profile': (_) => const ProfileScreen(),
+          '/reading-list': (_) => const ReadingListScreen(),
+          '/settings': (_) => const SettingsScreen(),        },
       ),
     );
   }

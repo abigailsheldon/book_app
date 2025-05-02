@@ -5,7 +5,6 @@ import '../services/google_books_service.dart';
 /* 
  * Manages book search (and eventually recommendations) state.
  */
-
 class BookProvider extends ChangeNotifier {
   final GoogleBooksService _booksService = GoogleBooksService();
 
@@ -17,23 +16,31 @@ class BookProvider extends ChangeNotifier {
   bool get loading => _loading;
   String? get error => _error;
 
-  // Search Google Books for [query] and update state.
+  /// Search Google Books for [query] and update state.
   Future<void> searchBooks(String query) async {
     _loading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _searchResults = await _booksService.searchBooks(query);
-    } catch (e) {
-      _error = e.toString();
-    }
+      final results = await _booksService.searchBooks(query);
 
-    _loading = false;
-    notifyListeners();
+      if (results.isEmpty) {
+        _searchResults = [];
+        _error = 'No books found for “$query”.';
+      } else {
+        _searchResults = results;
+      }
+    } catch (e) {
+      _searchResults = [];
+      _error = 'Failed to fetch books: ${e.toString()}';
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
   }
 
-  // Clear last results
+  /// Clear last results and any error.
   void clear() {
     _searchResults = [];
     _error = null;
