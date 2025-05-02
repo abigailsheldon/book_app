@@ -1,9 +1,9 @@
-/* Wraps Firestore CRUD operations for users, reviews, and discussion posts. */
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/review.dart';
 import '../models/user.dart';
 import '../models/discussion_post.dart';
+
+/* Wraps Firestore CRUD operations for users, reviews, and discussion posts. */
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;

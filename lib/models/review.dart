@@ -1,6 +1,5 @@
 /*
  * Represents a book review submitted by user and serializes to/from Firestore.
- *
  * Review fields:
  * id, bookId, reviewerId, revieewrName, rating, content, createdAt
  */ 

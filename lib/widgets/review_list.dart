@@ -1,7 +1,7 @@
-/* Displays a scrollable list of reviews for one book. */
-
 import 'package:flutter/material.dart';
 import '../models/review.dart';
+
+/* Displays a scrollable list of reviews for one book. */
 
 class ReviewList extends StatelessWidget {
   final Stream<List<Review>> reviewsStream;
