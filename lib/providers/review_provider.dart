@@ -17,4 +17,13 @@ class ReviewProvider extends ChangeNotifier {
 
   // Adds a new review to Firestore.
   Future<void> addReview(Review review) => _fs.addReview(review);
+
+  Future<void> updateReview(Review r) async {
+    await _fs.updateReview(r);
+  }
+
+  Future<void> deleteReview(String id) async {
+    await _fs.deleteReview(id);
+  }
+
 }

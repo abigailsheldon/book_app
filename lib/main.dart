@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'providers/user_provider.dart';
 import 'providers/book_provider.dart';
 import 'providers/review_provider.dart';
+import 'providers/discussion_provider.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
@@ -45,7 +46,9 @@ class BookApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => BookProvider()),
-        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => ReviewProvider()),        ChangeNotifierProvider(create: (_) => ReviewProvider()),
+        ChangeNotifierProvider(create: (_) => DiscussionProvider()),
+
         
         // Provides authentication state and methods via UserProvider
         ChangeNotifierProvider(create: (_) => UserProvider()),

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/discussion_post.dart';
+import '../services/firestore_service.dart';
 
 /*
  * A widget to display a single discussion post with author, timestamp,
- * content, and an optional reply button.
+ * content, and optional reply, edit, and delete actions.
  */
-
 class DiscussionPostWidget extends StatelessWidget {
-  
-  // The discussion post data to display
   final DiscussionPost post;
-  
-  // Optional callback when the reply button is tapped
   final VoidCallback? onReply;
 
   const DiscussionPostWidget({
@@ -20,7 +17,7 @@ class DiscussionPostWidget extends StatelessWidget {
     this.onReply,
   }) : super(key: key);
 
-  // Formats the DateTime to a simple MM/DD/YYYY HH:MM string
+  // Formats the DateTime to MM/DD/YYYY HH:MM
   String _formatTimestamp(DateTime dt) {
     final local = dt.toLocal();
     final month = local.month.toString().padLeft(2, '0');
@@ -28,7 +25,7 @@ class DiscussionPostWidget extends StatelessWidget {
     final year = local.year;
     final hour = local.hour.toString().padLeft(2, '0');
     final minute = local.minute.toString().padLeft(2, '0');
-    return '\$month/\$day/\$year \$hour:\$minute';
+    return '$month/$day/$year $hour:$minute';
   }
 
   @override
@@ -43,8 +40,6 @@ class DiscussionPostWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            // Header row: avatar, author name, timestamp, reply icon
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -60,11 +55,11 @@ class DiscussionPostWidget extends StatelessWidget {
                     children: [
                       Text(
                         post.authorName,
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
                         _formatTimestamp(post.createdAt),
-                        style: Theme.of(context).textTheme.caption,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
@@ -75,14 +70,82 @@ class DiscussionPostWidget extends StatelessWidget {
                     tooltip: 'Reply',
                     onPressed: onReply,
                   ),
+                // Edit/Delete menu
+                PopupMenuButton<String>(
+                  onSelected: (choice) async {
+                    final service = FirestoreService();
+                    if (choice == 'Edit') {
+                      String editedContent = post.content;
+                      final result = await showDialog<String>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Edit Post'),
+                          content: TextFormField(
+                            initialValue: post.content,
+                            maxLines: 3,
+                            onChanged: (v) => editedContent = v,
+                            decoration: const InputDecoration(
+                              labelText: 'Content',
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(ctx, editedContent),
+                              child: const Text('Save'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (result != null && result.trim().isNotEmpty) {
+                        final updated = DiscussionPost(
+                          id: post.id,
+                          authorId: post.authorId,
+                          authorName: post.authorName,
+                          category: post.category,
+                          content: result.trim(),
+                          createdAt: post.createdAt,
+                          parentId: post.parentId,
+                        );
+                        await service.updateDiscussionPost(updated);
+                      }
+                    } else if (choice == 'Delete') {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Delete Post?'),
+                          content: const Text('Are you sure you want to delete this post?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('Cancel'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirm == true) {
+                        await service.deleteDiscussionPost(post.id);
+                      }
+                    }
+                  },
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(value: 'Edit', child: Text('Edit')),
+                    PopupMenuItem(value: 'Delete', child: Text('Delete')),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            
-            // Post content text
             Text(
               post.content,
-              style: Theme.of(context).textTheme.bodyText2,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
         ),

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Represents a discussion post or reply stored in Firestore.
+// Represents a single discussion post (or comment) in a book’s discussion board.
 class DiscussionPost {
   final String id;
   final String authorId;
   final String authorName;
-  final String category;
+  final String category;    // e.g. the book ID
   final String content;
   final DateTime createdAt;
-  final String? parentId;
+  final String? parentId;   // null for top-level posts, post.id for replies
 
   DiscussionPost({
     required this.id,
@@ -20,7 +20,7 @@ class DiscussionPost {
     this.parentId,
   });
 
-  /// Creates a DiscussionPost from a Firestore document snapshot.
+  // Creates a DiscussionPost from a Firestore document snapshot.
   factory DiscussionPost.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return DiscussionPost(
@@ -34,7 +34,7 @@ class DiscussionPost {
     );
   }
 
-  // Converts this DiscussionPost into a map for saving to Firestore.
+  // Converts this model into a plain map suitable for Firestore.
   Map<String, dynamic> toMap() {
     return {
       'authorId': authorId,

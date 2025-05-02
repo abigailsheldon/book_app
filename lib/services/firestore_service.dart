@@ -57,7 +57,7 @@ class FirestoreService {
   Future<void> addDiscussionPost(DiscussionPost post) =>
       _db.collection('discussions').add(post.toMap());
 
-  /// Streams discussion posts by category/parent.
+  // Streams discussion posts by category/parent.
   Stream<List<DiscussionPost>> discussionStream(
       String category, {String? parentId}) {
     var query = _db
@@ -72,4 +72,20 @@ class FirestoreService {
     return query.snapshots().map((snap) =>
         snap.docs.map((doc) => DiscussionPost.fromFirestore(doc)).toList());
   }
+
+  /* Delete/edit posts */
+
+  // Reviews
+  Future<void> updateReview(Review review) =>
+    _db.collection('reviews').doc(review.id).update(review.toMap());
+
+  Future<void> deleteReview(String reviewId) =>
+    _db.collection('reviews').doc(reviewId).delete();
+
+  // Discussion posts
+  Future<void> updateDiscussionPost(DiscussionPost post) =>
+    _db.collection('discussions').doc(post.id).update(post.toMap());
+
+  Future<void> deleteDiscussionPost(String postId) =>
+    _db.collection('discussions').doc(postId).delete();
 }
