@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/*
- * Represents an app user and serializes to/from Firestore.
- * Stores uid (user id), email, display name, fav. genres, and reading lists
- */
-
+// Represents a user profile in Firestore.
 class AppUser {
   final String uid;
   final String email;
@@ -18,43 +14,35 @@ class AppUser {
     required this.uid,
     required this.email,
     this.displayName,
-    this.favoriteGenres = const [],
-    this.readingListWantToRead = const [],
-    this.readingListReading = const [],
-    this.readingListFinished = const [],
+    required this.favoriteGenres,
+    required this.readingListWantToRead,
+    required this.readingListReading,
+    required this.readingListFinished,
   });
 
-  /*
-   * Convert an AppUser instance to a Map for Firestore.
-   */
+  /// Convert Firestore document snapshot into an [AppUser].
+  factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return AppUser(
+      uid: doc.id,
+      email: data['email'] as String,
+      displayName: data['displayName'] as String?,
+      favoriteGenres: List<String>.from(data['favoriteGenres'] ?? <String>[]),
+      readingListWantToRead: List<String>.from(data['readingListWantToRead'] ?? <String>[]),
+      readingListReading: List<String>.from(data['readingListReading'] ?? <String>[]),
+      readingListFinished: List<String>.from(data['readingListFinished'] ?? <String>[]),
+    );
+  }
+
+  // Convert this [AppUser] into a map for saving to Firestore.
   Map<String, dynamic> toMap() {
     return {
-      'uid': uid,
       'email': email,
       'displayName': displayName,
       'favoriteGenres': favoriteGenres,
-      'readingList': {
-        'wantToRead': readingListWantToRead,
-        'reading': readingListReading,
-        'finished': readingListFinished,
-      },
+      'readingListWantToRead': readingListWantToRead,
+      'readingListReading': readingListReading,
+      'readingListFinished': readingListFinished,
     };
-  }
-
-  /*
-   * Construct AppUser from a Firestore DocumentSnapshot.
-   */
-  factory AppUser.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    final reading = data['readingList'] as Map<String, dynamic>? ?? {};
-    return AppUser(
-      uid: data['uid'],
-      email: data['email'],
-      displayName: data['displayName'],
-      favoriteGenres: List<String>.from(data['favoriteGenres'] ?? []),
-      readingListWantToRead: List<String>.from(reading['wantToRead'] ?? []),
-      readingListReading: List<String>.from(reading['reading'] ?? []),
-      readingListFinished: List<String>.from(reading['finished'] ?? []),
-    );
   }
 }

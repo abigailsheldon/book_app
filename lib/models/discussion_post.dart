@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/*
- * Represents a single post in a discussion board and serializes to/from Firestore.
- */
-
+// Represents a discussion post or reply stored in Firestore.
 class DiscussionPost {
   final String id;
   final String authorId;
@@ -23,9 +20,21 @@ class DiscussionPost {
     this.parentId,
   });
 
-  /*
-   * Convert a DiscussionPost to a Map for Firestore storage.
-   */
+  /// Creates a DiscussionPost from a Firestore document snapshot.
+  factory DiscussionPost.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return DiscussionPost(
+      id: doc.id,
+      authorId: data['authorId'] as String,
+      authorName: data['authorName'] as String,
+      category: data['category'] as String,
+      content: data['content'] as String,
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      parentId: data['parentId'] as String?,
+    );
+  }
+
+  // Converts this DiscussionPost into a map for saving to Firestore.
   Map<String, dynamic> toMap() {
     return {
       'authorId': authorId,
@@ -35,21 +44,5 @@ class DiscussionPost {
       'createdAt': Timestamp.fromDate(createdAt),
       'parentId': parentId,
     };
-  }
-
-  /*
-   * Create a DiscussionPost from a Firestore DocumentSnapshot.
-   */
-  factory DiscussionPost.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return DiscussionPost(
-      id: doc.id,
-      authorId: data['authorId'],
-      authorName: data['authorName'],
-      category: data['category'],
-      content: data['content'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      parentId: data['parentId'],
-    );
   }
 }

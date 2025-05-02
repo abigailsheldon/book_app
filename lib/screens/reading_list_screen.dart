@@ -1,3 +1,4 @@
+// lib/screens/reading_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
@@ -38,7 +39,8 @@ class _ReadingListScreenState extends State<ReadingListScreen>
   }
 
   Future<void> _loadUser() async {
-    final firebaseUser = Provider.of<UserProvider>(context, listen: false).user;
+    final firebaseUser =
+        Provider.of<UserProvider>(context, listen: false).user;
     if (firebaseUser != null) {
       final userData = await _firestore.getUser(firebaseUser.uid);
       setState(() {
@@ -50,7 +52,7 @@ class _ReadingListScreenState extends State<ReadingListScreen>
 
   Future<void> _updateList(String bookId, String action) async {
     if (_appUser == null) return;
-    // Copy existing lists
+    // Copy lists
     final want = List<String>.from(_appUser!.readingListWantToRead);
     final reading = List<String>.from(_appUser!.readingListReading);
     final finished = List<String>.from(_appUser!.readingListFinished);
@@ -58,19 +60,19 @@ class _ReadingListScreenState extends State<ReadingListScreen>
     want.remove(bookId);
     reading.remove(bookId);
     finished.remove(bookId);
-    // Add to target
-    if (action != 'Remove') {
-      switch (action) {
-        case 'Want to Read':
-          want.add(bookId);
-          break;
-        case 'Reading':
-          reading.add(bookId);
-          break;
-        case 'Finished':
-          finished.add(bookId);
-          break;
-      }
+    // Add to target if not removal
+    switch (action) {
+      case 'Want to Read':
+        want.add(bookId);
+        break;
+      case 'Reading':
+        reading.add(bookId);
+        break;
+      case 'Finished':
+        finished.add(bookId);
+        break;
+      case 'Remove':
+        break;
     }
     final updated = AppUser(
       uid: _appUser!.uid,
@@ -102,11 +104,12 @@ class _ReadingListScreenState extends State<ReadingListScreen>
       itemBuilder: (ctx, i) {
         final id = currentList[i];
         return ListTile(
-          title: Text(id), // TODO: replace with BookCard for real details
+          title: Text(id), // TODO: replace with BookCard when ready
           trailing: PopupMenuButton<String>(
             onSelected: (value) => _updateList(id, value),
             itemBuilder: (_) => [
-              for (var tab in _tabs) PopupMenuItem(value: tab, child: Text('Move to $tab')),
+              for (var tab in _tabs)
+                PopupMenuItem(value: tab, child: Text('Move to \$tab')),
               const PopupMenuDivider(),
               const PopupMenuItem(value: 'Remove', child: Text('Remove')),
             ],
@@ -130,8 +133,10 @@ class _ReadingListScreenState extends State<ReadingListScreen>
           ? const Center(child: CircularProgressIndicator())
           : TabBarView(
               controller: _tabController,
-              children:
-                  List.generate(_tabs.length, (index) => _buildTabContent(index)),
+              children: List.generate(
+                _tabs.length,
+                (index) => _buildTabContent(index),
+              ),
             ),
     );
   }

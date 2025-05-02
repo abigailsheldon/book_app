@@ -1,11 +1,6 @@
-/*
- * Represents a book review submitted by user and serializes to/from Firestore.
- * Review fields:
- * id, bookId, reviewerId, revieewrName, rating, content, createdAt
- */ 
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Represents a book review stored in Firestore.
 class Review {
   final String id;
   final String bookId;
@@ -25,9 +20,21 @@ class Review {
     required this.createdAt,
   });
 
-  /*
-   * Convert Review instance to Map for Firestore storage.
-   */
+  /// Creates a Review from a Firestore document snapshot.
+  factory Review.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    return Review(
+      id: doc.id,
+      bookId: data['bookId'] as String,
+      reviewerId: data['reviewerId'] as String,
+      reviewerName: data['reviewerName'] as String,
+      rating: (data['rating'] as num).toInt(),
+      content: data['content'] as String,
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+    );
+  }
+
+  /// Converts this Review into a map for saving to Firestore.
   Map<String, dynamic> toMap() {
     return {
       'bookId': bookId,
@@ -37,21 +44,5 @@ class Review {
       'content': content,
       'createdAt': Timestamp.fromDate(createdAt),
     };
-  }
-
-  /*
-   * Create a Review from Firestore DocumentSnapshot.
-   */
-  factory Review.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Review(
-      id: doc.id,
-      bookId: data['bookId'],
-      reviewerId: data['reviewerId'],
-      reviewerName: data['reviewerName'],
-      rating: data['rating'] as int,
-      content: data['content'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-    );
   }
 }
