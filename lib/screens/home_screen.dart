@@ -81,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              
               // Search bar
               TextField(
                 controller: _searchController,

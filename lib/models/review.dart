@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Represents a book review stored in Firestore.
+// Represents a book review stored in Firestore.
 class Review {
   final String id;
   final String bookId;
@@ -20,7 +20,7 @@ class Review {
     required this.createdAt,
   });
 
-  /// Creates a Review from a Firestore document snapshot.
+  // Creates a Review from a Firestore document snapshot.
   factory Review.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return Review(
@@ -34,7 +34,7 @@ class Review {
     );
   }
 
-  /// Converts this Review into a map for saving to Firestore.
+  // Converts this Review into a map for saving to Firestore.
   Map<String, dynamic> toMap() {
     return {
       'bookId': bookId,

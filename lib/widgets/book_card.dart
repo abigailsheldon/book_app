@@ -7,10 +7,11 @@ import '../models/book.dart';
  */
 
 class BookCard extends StatelessWidget {
-  // The book to display.
+  
+  // Book to display
   final Book book;
 
-  // Callback when the card is tapped.
+  // Callback when the card is tapped
   final VoidCallback? onTap;
 
   const BookCard({

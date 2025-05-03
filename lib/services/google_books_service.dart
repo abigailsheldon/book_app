@@ -22,13 +22,11 @@ class GoogleBooksService {
     // Debug
     debugPrint('GoogleBooks → GET $url');
 
-
     final uri = Uri.parse(url);
     final response = await http.get(uri);
 
     // Debug
     debugPrint('GoogleBooks ← ${response.statusCode}: ${response.body}');
-
 
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch books: ${response.statusCode}');

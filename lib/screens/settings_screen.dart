@@ -88,9 +88,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    
                     // Display user email (read-only)
                     Text('Email: ${_appUser!.email}'),
                     const SizedBox(height: 16),
+                    
                     // Display name input
                     TextFormField(
                       controller: _nameController,
@@ -104,6 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               : 'Enter a display name',
                     ),
                     const SizedBox(height: 24),
+                    
                     // Favorite genres selection
                     const Text('Favorite Genres'),
                     const SizedBox(height: 8),
@@ -126,6 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 32),
+                    
                     // Save button
                     ElevatedButton(
                       onPressed: _loading ? null : _saveSettings,
@@ -135,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           : const Text('Save Settings'),
                     ),
                     const SizedBox(height: 16),
+                    
                     // Logout button
                     OutlinedButton(
                       onPressed: _logout,

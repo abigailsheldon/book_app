@@ -3,8 +3,10 @@
 import 'dart:convert';
 import 'package:dart_openai/dart_openai.dart';
 
-/// Wraps OpenAI chat to return a JSON array of book recommendations
-/// in the form "Title by Author".
+/* 
+ * Wraps OpenAI chat to return a JSON array of book recommendations
+ * in the form "Title by Author".
+ */
 class OpenAIService {
   Future<List<String>> getBookRecommendations({
     required List<String> genres,
@@ -18,7 +20,7 @@ Please suggest 5 more book titles (just title and author) and return as a JSON a
 ["The Hobbit by J.R.R. Tolkien", "Dune by Frank Herbert", …]
 ''';
 
-    // Use the Chat API with GPT-4.1 (or swap to gpt-3.5-turbo)
+    // Use the Chat API with gpt-3.5-turbo
     final chat = await OpenAI.instance.chat.create(
       model: "gpt-3.5-turbo-16k",
       messages: [

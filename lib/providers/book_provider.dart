@@ -42,7 +42,7 @@ class BookProvider extends ChangeNotifier {
     }
   }
 
-  /// Clear last results and any error.
+  // Clear last results and any error.
   void clear() {
     _searchResults = [];
     _error = null;

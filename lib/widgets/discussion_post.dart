@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/discussion_post.dart';
 import '../services/firestore_service.dart';
 
@@ -70,6 +69,7 @@ class DiscussionPostWidget extends StatelessWidget {
                     tooltip: 'Reply',
                     onPressed: onReply,
                   ),
+                
                 // Edit/Delete menu
                 PopupMenuButton<String>(
                   onSelected: (choice) async {

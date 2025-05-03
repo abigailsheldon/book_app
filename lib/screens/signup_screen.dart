@@ -24,7 +24,8 @@ class _SignupScreenState extends State<SignupScreen> {
     final userProv = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Sign Up')),
-      // allow the body to resize when the keyboard opens
+      
+      // Allow the body to resize when the keyboard opens
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -34,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                
                 // Email
                 TextFormField(
                   decoration: const InputDecoration(
@@ -46,6 +48,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   onSaved: (val) => _email = val!.trim(),
                 ),
                 const SizedBox(height: 16),
+                
                 // Password
                 TextFormField(
                   decoration: const InputDecoration(
@@ -58,6 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   onSaved: (val) => _password = val!,
                 ),
                 const SizedBox(height: 24),
+                
                 // Error message
                 if (userProv.errorMessage != null)
                   Text(
@@ -65,6 +69,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     style: const TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
+                
                 // Sign Up button
                 ElevatedButton(
                   onPressed: _loading
@@ -93,6 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       : const Text('Sign Up'),
                 ),
                 const SizedBox(height: 12),
+                
                 // Back to login
                 TextButton(
                   onPressed: () =>

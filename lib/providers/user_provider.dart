@@ -96,15 +96,18 @@ class UserProvider extends ChangeNotifier {
    */
   Future<void> updateReadingList(String bookId, String target) async {
     if (_appUser == null) return;
-    // copy lists
+    
+    // Copy lists
     final want = List<String>.from(_appUser!.readingListWantToRead);
     final reading = List<String>.from(_appUser!.readingListReading);
     final finished = List<String>.from(_appUser!.readingListFinished);
-    // remove from all
+    
+    // Remove from all
     want.remove(bookId);
     reading.remove(bookId);
     finished.remove(bookId);
-    // add to target
+    
+    // Add to target
     switch (target) {
       case 'Want to Read':
         want.add(bookId);
@@ -119,7 +122,7 @@ class UserProvider extends ChangeNotifier {
       default:
         break;
     }
-    // persist
+    // Persist
     final updated = AppUser(
       uid: _appUser!.uid,
       email: _appUser!.email,

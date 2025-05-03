@@ -8,7 +8,7 @@ class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance; 
 
-  // Fetches the AppUser doc, or makes a blank one if missing.
+  // Fetches the AppUser doc, or makes a blank one if missing
   Future<AppUser> getUser(String uid) async {
     final docRef = _db.collection('users').doc(uid);
     final snapshot = await docRef.get();
@@ -57,7 +57,7 @@ class FirestoreService {
   Future<void> addDiscussionPost(DiscussionPost post) =>
       _db.collection('discussions').add(post.toMap());
 
-  // Streams discussion posts by category/parent.
+  // Streams discussion posts by category/parent
   Stream<List<DiscussionPost>> discussionStream(
       String category, {String? parentId}) {
     var query = _db

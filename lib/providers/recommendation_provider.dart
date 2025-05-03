@@ -1,5 +1,3 @@
-// lib/providers/recommendation_provider.dart
-
 import 'package:flutter/material.dart';
 import '../models/book.dart';
 import '../services/openai_service.dart';

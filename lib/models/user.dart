@@ -20,7 +20,7 @@ class AppUser {
     required this.readingListFinished,
   });
 
-  /// Convert Firestore document snapshot into an [AppUser].
+  // Convert Firestore document snapshot into an [AppUser].
   factory AppUser.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data()!;
     return AppUser(
