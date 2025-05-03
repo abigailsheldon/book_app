@@ -2,6 +2,7 @@
 
 An all-in-one Flutter mobile app that lets readers search for books, track their reading, write/edit/delete reviews, join discussion boards, and get AI-driven personalized suggestions.
 
+Presentation: https://youtu.be/a_lRYFDl9gU 
 ---
 
 ## Features
