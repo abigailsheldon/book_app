@@ -34,14 +34,7 @@ An all-in-one Flutter mobile app that lets readers search for books, track their
    - Android SDK & Platform Tools (via Android Studio)  
    - Set ANDROID_HOME / ANDROID_SDK_ROOT in your shell if needed.
 
-3. **iOS Toolchain** (macOS only)  
-   - Xcode (full install via App Store)  
-   - CocoaPods:  
-     ```bash
-     sudo gem install cocoapods
-     ```
-
-4. **Environment Variables (.env)**  
+3. **Environment Variables (.env)**  
    - Create a `.env` file at the **project root** (same level as `pubspec.yaml`).  
    - Add your API keys:
      ```
@@ -56,7 +49,7 @@ An all-in-one Flutter mobile app that lets readers search for books, track their
      NYTIMES_API_KEY=...
      ```
 
-5. **Firebase Setup**  
+4. **Firebase Setup**  
    - Create a Firebase project.  
    - Add an Android &/or iOS app to your project.  
    - Download & place `google-services.json` (Android) in `android/app/`  
@@ -66,7 +59,7 @@ An all-in-one Flutter mobile app that lets readers search for books, track their
      - `reviews` collection: `bookId` (ascending) + `createdAt` (descending)
      - `discussions` collection: `category` + `parentId` + `createdAt`
 
-6. **FlutterFire Configuration**  
+5. **FlutterFire Configuration**  
    ```bash
    flutterfire configure \
      --project your-firebase-project-id \
