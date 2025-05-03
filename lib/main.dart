@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:dart_openai/dart_openai.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'firebase_options.dart';
 
@@ -35,6 +36,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // DISABLE reCAPTCHA on Android emulators/dev builds ***
+  await FirebaseAuth.instance
+      .setSettings(appVerificationDisabledForTesting: true);
+
+
   runApp(const BookApp());
 }
 
@@ -53,8 +59,6 @@ class BookApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ReviewProvider()),        ChangeNotifierProvider(create: (_) => ReviewProvider()),
         ChangeNotifierProvider(create: (_) => DiscussionProvider()),
         ChangeNotifierProvider(create: (_) => RecommendationProvider()),
-
-
         
         // Provides authentication state and methods via UserProvider
         ChangeNotifierProvider(create: (_) => UserProvider()),

@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '609481354625',
     projectId: 'book-app-ff535',
     storageBucket: 'book-app-ff535.firebasestorage.app',
+    iosClientId: '609481354625-ci519jif9mn2ql69uggdllqmhqk6eu9g.apps.googleusercontent.com',
     iosBundleId: 'com.example.bookApp',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '609481354625',
     projectId: 'book-app-ff535',
     storageBucket: 'book-app-ff535.firebasestorage.app',
+    iosClientId: '609481354625-ci519jif9mn2ql69uggdllqmhqk6eu9g.apps.googleusercontent.com',
     iosBundleId: 'com.example.bookApp',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'book-app-ff535.firebasestorage.app',
     measurementId: 'G-1D5N9TVQQC',
   );
+
 }
